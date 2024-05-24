@@ -56,6 +56,9 @@ func numbers() (num []int) {
 }
 
 func mean(num []int) float64 {
+	if len(num) == 0 {
+		return 0
+	}
 	var sum float64
 	for i := 0; i < len(num); i++ {
 		sum += float64(num[i])
@@ -64,6 +67,9 @@ func mean(num []int) float64 {
 }
 
 func median(num []int) float64 {
+	if len(num) == 0 {
+		return 0
+	}
 	sort.Ints(num)
 	var half = len(num) / 2
 	if len(num)%2 == 0 {
