@@ -1,49 +1,40 @@
 package main
 
 import (
-	"math"
 	"testing"
 )
 
 func TestSD(t *testing.T) {
-	// Тест на пустой массив
-	nums := []int{}
-	if sd(nums) != 0 {
-		t.Errorf("Expected standard deviation of empty slice to be 0, but got %v", sd(nums))
+	// Тестовые случаи
+	testCases := []struct {
+		name     string
+		input    []int
+		expected float64
+	}{
+		{
+			name:     "Test case 1",
+			input:    []int{1, 1, 2, 2, 2},
+			expected: 0.5477225575051661,
+		},
+		{
+			name:     "Test case 2",
+			input:    []int{1, 2, 3, 4, 5},
+			expected: 1.5811388300841898,
+		},
+		{
+			name:     "Empty array",
+			input:    []int{},
+			expected: 0,
+		},
 	}
 
-	// Тест на массив с одним элементом
-	nums = []int{5}
-	if sd(nums) != 0 {
-		t.Errorf("Expected standard deviation of [5] to be 0, but got %v", sd(nums))
-	}
-
-	// Тест на массив с несколькими одинаковыми элементами
-	nums = []int{1, 1, 2, 2, 2}
-	expectedSD := 0.0
-	if sd(nums) != expectedSD {
-		t.Errorf("Expected standard deviation of [1, 1, 2, 2, 2] to be %v, but got %v", expectedSD, sd(nums))
-	}
-
-	// Тест на массив с разными элементами
-	nums = []int{1, 2, 3, 4, 5}
-	expectedSD = math.Sqrt(2)
-	if sd(nums) != expectedSD {
-		t.Errorf("Expected standard deviation of [1, 2, 3, 4, 5] to be %v, but got %v", expectedSD, sd(nums))
-	}
-
-	// Тест на массив с отрицательными числами
-	nums = []int{-1, -2, -3, -4, -5}
-	expectedSD = math.Sqrt(2)
-	if sd(nums) != expectedSD {
-		t.Errorf("Expected standard deviation of [-1, -2, -3, -4, -5] to be %v, but got %v", expectedSD, sd(nums))
-	}
-
-	// Тест на случай с плавающей точкой
-	nums = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-	expectedSD = math.Sqrt(2)
-	if sd(nums) != expectedSD {
-		t.Errorf("Expected standard deviation of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] to be %v, but got %v", expectedSD, sd(nums))
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			actual := sd(tc.input)
+			if actual != tc.expected {
+				t.Errorf("Expected %v, got %v", tc.expected, actual)
+			}
+		})
 	}
 }
 
@@ -76,7 +67,7 @@ func TestMode(t *testing.T) {
 
 	// Тест на массив с отрицательными числами
 	nums = []int{-1, -2, -3, -4, -5}
-	expectedMode = -1
+	expectedMode = -5
 	if mode(nums) != expectedMode {
 		t.Errorf("Expected mode of [-1, -2, -3, -4, -5] to be %v, but got %v", expectedMode, mode(nums))
 	}

@@ -6,11 +6,11 @@ import (
 )
 
 func CheckFile() (fileName string, err error) {
-	var NoFilenameError = errors.New("передайте название файла через флаг -f")
+	var noFileError = errors.New("передайте название файла через флаг -f")
 	flag.StringVar(&fileName, "f", "", "input file")
 	flag.Parse()
 	if fileName == "" {
-		return "", NoFilenameError
+		err = noFileError
 	}
 	return fileName, err
 }

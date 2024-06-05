@@ -3,9 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log/slog"
 	"math"
 	"os"
 	"sort"
+)
+
+const (
+	maxValue = 10000
+	minValue = -10000
 )
 
 var (
@@ -28,41 +34,46 @@ func init() {
 
 func main() {
 	flag.Parse()
-	printRes(numbers())
+	res, err := numbers()
+	if err != nil {
+		slog.Error(err.Error())
+		return
+	}
+	printRes(res)
 }
 
-func numbers() (num []int) {
+func numbers() ([]int, error) {
+	var num []int
 	var length int
 	fmt.Println("Enter count of numbers:")
 	_, err := fmt.Scan(&length)
 	if err != nil {
-		fmt.Println("You should enter a number")
-		os.Exit(1)
+		return nil, fmt.Errorf("length should be a number: %w", err)
 	}
 	fmt.Println("Enter numbers less 10k or more -10k:")
 	num = make([]int, length)
 	for i := 0; i < length; i++ {
-		_, err := fmt.Scanf("%d", &num[i])
+		_, err = fmt.Scanf("%d", &num[i])
 		if err != nil {
-			fmt.Println("You should enter a number")
-			os.Exit(1)
+			return nil, fmt.Errorf("you should enter a number: %w", err)
 		}
-		if num[i] < -100000 || num[i] > 100000 {
-			fmt.Println("Numbers should be less 10k or more -10k")
-			os.Exit(1)
+		if num[i] < minValue || num[i] > maxValue {
+			return nil, fmt.Errorf("numbers should be less 10k or more -10k")
 		}
 	}
-	return num
+	return num, nil
 }
 
 func mean(num []int) float64 {
 	if len(num) == 0 {
 		return 0
 	}
-	var sum float64
-	for i := 0; i < len(num); i++ {
-		sum += float64(num[i])
+	var sum, count float64
+	for _, v := range num {
+		sum += float64(v)
+		count++
 	}
+
 	return sum / float64(len(num))
 }
 
@@ -80,13 +91,16 @@ func median(num []int) float64 {
 }
 
 func mode(num []int) int {
+	if len(num) == 0 {
+		return 0
+	}
 	common := make(map[int]int)
-	value, count := 0, 0
+	value, count := math.MaxInt, math.MinInt
 	for _, v := range num {
 		common[v]++
 	}
 	for key, v := range common {
-		if v > count || (key == count && v < value) {
+		if v > count || (key < value && v >= count) {
 			value, count = key, v
 		}
 	}
@@ -96,10 +110,11 @@ func mode(num []int) int {
 func sd(num []int) float64 {
 	average := mean(num)
 	var res float64
-	for i := range num {
-		res += math.Pow(float64(num[i])-average, 2) / float64(len(num))
+	for _, i := range num {
+		res += math.Pow(float64(i)-average, 2)
 	}
-	return math.Sqrt(res)
+	result := res / float64(len(num)-1)
+	return math.Sqrt(result)
 }
 
 func printRes(num []int) {
